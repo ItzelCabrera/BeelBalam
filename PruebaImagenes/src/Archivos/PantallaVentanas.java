@@ -5,6 +5,7 @@
  */
 package Archivos;
 
+import com.toedter.calendar.JDateChooser;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.sql.CallableStatement;
@@ -12,6 +13,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -32,6 +40,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
     
     String user; //usuario con el que se inició sesión
     String oldTarjeta;
+    int CODreserva;
     
     public static PantallaPrueba p3 ;
     public static PantallaRegistro panReg2;
@@ -754,7 +763,10 @@ public class PantallaVentanas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveChangesActionPerformed
 
     private void btnComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprarActionPerformed
-        modificarReserva();
+        int codR = 6;
+        
+        modificarReserva(codR);
+        getReservaData(codR);
     }//GEN-LAST:event_btnComprarActionPerformed
 
     private void cbTramoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTramoActionPerformed
@@ -817,32 +829,111 @@ public class PantallaVentanas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarUsuarioActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        //Codigo para validar el ingreso de datos
-        int v = 0;
-        int l = 0;
-        //Obtengo el nombre del cliente
-        String nombre = this.txtNombres.getText();
-        l = nombre.length();
-        if((l>0)&&(l<=30)){
-           String[] nombres = nombre.split("\\s+");
-            if(nombres.length == 1){
-                System.out.println("Solo un nombre c: "+nombres[0]);
-            }else if(nombres.length == 2){
-                System.out.println("Primer nombre: "+nombres[0]);
-                System.out.println("Segundo nombre: "+nombres[1]);
+        String[] retorno = V_ModifReserva();
+        int v = Integer.parseInt(retorno[2]);
+        
+        if(v == 4){//Realiza el cambio de reserva debido a que los datos ingresados son correctos
+            String r = "";
+            boolean res;
+            try {
+                //Conecta
+                Connection conex = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
+                CallableStatement stm = conex.prepareCall("{call VERIFICACION_MATRICULA(?,?,?,?,?,?,?,?,?,?,?)}");
+                stm.setString(1,retorno[0] );
+                stm.setString(2, retorno[1]);
+                stm.setString(3, this.txtApeP.getText());
+                stm.setString(4, this.txtApeM.getText());
+                stm.setInt(5, Integer.parseInt(this.txtMes.getText()));
+                stm.setString(6, this.cbNacionalidad.getSelectedItem().toString());
+                stm.setString(7, "120620211300TG1N"); //metodo para obtener la matricula
+                stm.setString(8, "12/06/2021 13:00:00"); //metodo para obtener la fecha de reserva
+                stm.setString(9, this.getUser());
+                stm.setString(10,this.getTramo(this.cbTramo.getSelectedIndex()));
+                stm.setInt(11, this.getCODreserva());
+                ResultSet rs = stm.executeQuery();
+                if(rs.next())r = rs.getString(1);
+                if(r == "E") res = false;
+                else res = true;
+                conex.close();
+                stm.close();
+                rs.close();
+            } catch (SQLException ex) {
+                System.out.println("ERROR en modificarReserva");
+                res = false;
             }
-            v++;
+            if(res){ //La reserva se modifico con éxito
+                exitoModifReserva();
+            }else{
+                errorModifReserva(1);
+            }
+        }else{//Los datos ingresados no tienen cumplen los rquisitos
+            errorModifReserva(2);
         }
-        l =this.txtApeP.getText().length(); 
-        if( (l>0)&&(l<=15))v++;
-        l =this.txtApeM.getText().length(); 
-        if((l>0)&&(l<=15))v++;
-        l =this.txtEdad.getText().length(); 
-        if(l>0)v++;
-        if(v == 4){
-            //Realiza el cambio de reserva
-        }else{
-            //Los datos ingresados no tienen la longitud adecuada
+    }//GEN-LAST:event_btnModificarActionPerformed
+    
+    public String getTramo(int itemSelected){
+        String tramo = "";
+        switch (itemSelected) {
+        case 0:
+            tramo = "TS1";
+            break;
+        case 1:
+            tramo = "TS2";
+            break;
+        case 2:
+            tramo = "TC1";
+            break;
+        case 3:
+            tramo = "TC2";
+            break;
+        case 4:
+            tramo = "TG1-2";
+            break;
+        case 5:
+            tramo = "TG3";
+            break;
+        default:
+            tramo = "ERROR";
+            break;
+    }
+        return tramo;
+    }
+    
+    public void exitoModifReserva(){
+        JOptionPane.showMessageDialog(null, "Reserva Modificada con exito");
+        this.txtNombres.setText("");
+        this.txtApeP.setText("");
+        this.txtApeM.setText("");
+        this.txtEdad.setText("");
+        this.btnComprar.setVisible(true);
+        this.btnModificar.setVisible(false);
+        this.jLabel9.setText("Realizar reserva");
+    }
+    
+    public void errorModifReserva(int err){
+        if(err == 1){
+            int input = JOptionPane.showConfirmDialog(null, "Hubo un error al tratar de modificar la reserva."
+                        + "\nLas razones pueden ser varias:"
+                        + "\n\t*No hay capacidad en el tren donde desea reservar"
+                        + "\n\t*Hay contradicciones en la base de datos"
+                        + "\n¿DESEA INTENTAR CAMBIAR LA RESERVA DE NUEVO?", "ERROR", 
+                    JOptionPane.YES_NO_OPTION);
+            if(input == 0){
+               //-->se muestran los datos de la reserva original 
+               System.out.println("Se muestran los datos de la reserva original");
+            }else{
+                System.out.println("Ya no se modifica la reserva, se mantiene igual que como un inicio");
+                this.txtNombres.setText("");
+                this.txtApeP.setText("");
+                this.txtApeM.setText("");
+                this.txtEdad.setText("");
+                this.btnComprar.setVisible(true);
+                this.btnModificar.setVisible(false);
+                this.jLabel9.setText("Realizar reserva");
+                JOptionPane.showMessageDialog(null, "La reserva no se modifico");
+            }
+        }
+        if(err == 2){
             int input = JOptionPane.showConfirmDialog(null, "Datos ingresados no cumplen con los requisitos adecuados.\n"
                     + "\t*Los primeros nombres deben tener máximo 30 caracteres.\n"
                     + "\t*El primer apellido debe tener como máximo 15 caracteres\n"
@@ -864,8 +955,55 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "La reserva no se modifico");
             }
         }
-    }//GEN-LAST:event_btnModificarActionPerformed
-
+    }
+    
+    public String[] V_ModifReserva(){
+        String [] retorno = {"","",""};
+        //Codigo para validar el ingreso de datos
+        int v = 0;
+        int l = 0;
+        
+        String nombre = this.txtNombres.getText();
+        l = nombre.length();
+        if((l>0)&&(l<=30)){
+           String[] nombres = nombre.split("\\s+");//divido la cadena 
+            if(nombres.length == 1){
+                if(isNumeric(nombres[0])) {
+                    //no es valido el primer nombre
+                    System.out.println("El primer nombre es un numero, esto no es valido");
+                }else{
+                    //Es valido el primer nombre
+                    System.out.println("Solo un nombre c: "+nombres[0]);
+                    retorno[0] = nombres[0];
+                    retorno[1] = null;
+                    v++;
+                }
+            }else if(nombres.length == 2){
+                if((isNumeric(nombres[0]))||(isNumeric(nombres[1])) ){
+                    //Alguno de los nombres no es valido
+                    System.out.println("Algun nombre es un numero y esto no es válido");
+                }else{
+                    //Ambos nombres son validos
+                    System.out.println("Primer nombre: "+nombres[0]);
+                    System.out.println("Segundo nombre: "+nombres[1]);
+                    retorno[0] = nombres[0];
+                    retorno[1] = nombres[1];
+                    v++;
+                }
+            }
+        }
+        l =this.txtApeP.getText().length(); 
+        if( (l>0)&&(l<=15) && (!isNumeric(this.txtApeP.getText())))v++;
+        l =this.txtApeM.getText().length(); 
+        if((l<=15)&& (!isNumeric(this.txtApeM.getText())))v++;
+        l =this.txtEdad.getText().length(); 
+        if((l>0)&& (isNumeric(this.txtEdad.getText())))v++;
+        
+        retorno[2] = Integer.toString(v);
+        
+        return retorno;
+    }
+    
     public void changes(String u){
         //Metodo que manda la info de los cambios hechos en los datos del usuario
         this.btnSaveChanges.setVisible(false);
@@ -876,7 +1014,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
         this.txtDPassword.setEditable(false);
 
         System.out.println(u);
-        if(u.equals(".")){ //sin cambios en el nombre del usuario
+        if(u.equals(".")){ //Np se puede cambiar los datos del usuario
             this.getData(this.getUser(),2);
             JOptionPane.showMessageDialog(null, "Hubo un error al intentar guardar los nuevos cambios,intente de nuevo");
         }
@@ -904,6 +1042,74 @@ public class PantallaVentanas extends javax.swing.JFrame {
         return this.user;
     }
 
+    public void setCODreserva(int CODreserva) {
+        this.CODreserva = CODreserva;
+        System.out.println("SET COD RESERVA = " + this.getCODreserva());
+    }
+
+    public int getCODreserva() {
+        return CODreserva;
+    }
+    
+    public void getReservaData(int codReserva){
+        String fechaR = "";
+        String tramo = "";
+        String matricula = "";
+        /*String sDate1="31/12/1998";  
+        Date date1;  
+        try {
+            date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+            fecha.setDate(date1);
+        } catch (ParseException ex) {
+            Logger.getLogger(PantallaVentanas.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        try {
+            //Conecta
+            Connection conex = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
+            CallableStatement stm = conex.prepareCall("{call GET_RESERVA_DATA(?)}");
+            stm.setInt(1,codReserva);
+            ResultSet rs = stm.executeQuery();
+            if(rs.next()){
+                fechaR = rs.getString(1);
+                tramo = rs.getString(2);
+                matricula = rs.getString(3);
+            }
+            System.out.println(tramo);
+            switch (tramo) {
+                case "TS1":
+                    this.cbTramo.setSelectedIndex(0);
+                    break;
+                case "TS2":
+                    this.cbTramo.setSelectedIndex(1);
+                    break;
+                case "TC1":
+                    this.cbTramo.setSelectedIndex(2);
+                    break;
+                case "TC2":
+                    this.cbTramo.setSelectedIndex(3);
+                    break;
+                case "TG1-2":
+                    this.cbTramo.setSelectedIndex(4);
+                    break;
+                case "TG3":
+                    this.cbTramo.setSelectedIndex(5);
+                    break;
+                default:
+                    System.out.println("aqui no");
+                    break;
+            }
+            String sDate1 = "12/10/2021";
+            String[] datosFR = fechaR.split("\\s+");//divido la cadena 
+            Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+            fecha.setDate(date1);
+            conex.close();
+            stm.close();
+            rs.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR en getReservaData");
+        }
+    }
+    
     public void getData(String user,int n){
         //Metodo que obtiene la data del usuario 
         String nombre = null;
@@ -1030,10 +1236,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
         }
     }
     
-    public void modificarReserva(){
+    public void modificarReserva(int codReserva){
         this.jLabel9.setText("Modificando la reserva");
         this.btnModificar.setVisible(true);
         this.btnComprar.setVisible(false);
+        this.setCODreserva(codReserva);
     }
     
     public void transEditarU(String u,int cvc,int fecha,String pN,JComboBox jcb,String sN,String pA,String sA){
@@ -1044,6 +1251,15 @@ public class PantallaVentanas extends javax.swing.JFrame {
             u = this.editUsuario(u, cvc, fecha, pN, jcb, sN, pA, sA);
             this.changes(u);
         }
+    }
+    
+    public static boolean isNumeric(String cadena){
+	try {
+		Integer.parseInt(cadena);
+		return true;
+	} catch (NumberFormatException nfe){
+		return false;
+	}
     }
     
     public static void main(String args[]) {
