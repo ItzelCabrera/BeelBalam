@@ -47,6 +47,12 @@ public class PantallaVentanas extends javax.swing.JFrame {
     
     FondoPantallaVent fondo = new FondoPantallaVent();
     
+    public static String n1;
+    public static String n2;
+    public static String a1;
+    public static String a2;
+    
+    
     public PantallaVentanas() {
         this.setContentPane(fondo);
         initComponents();
@@ -72,6 +78,24 @@ public class PantallaVentanas extends javax.swing.JFrame {
         modelo.addColumn("Costo");
     }
     String[]botones={"Confirmar","Modificar","Cancelar"};
+    
+    public void LLenarCbCompra(){
+        DefaultComboBoxModel tr = new DefaultComboBoxModel();
+        tr.addElement("SELECCIONAR");
+        try{
+            Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
+            CallableStatement resConexion = miConexion.prepareCall("{call VER_TRAMO_NOM}");
+            ResultSet rtr = resConexion.executeQuery();
+            while(rtr.next()){
+                tr.addElement(rtr.getString(1));
+            }
+            resConexion.close();
+            miConexion.close();
+        }catch(Exception e){
+            System.out.println("Hubo un error en el llenado de tramo");
+        }
+        cbTramo.setModel(tr);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -143,6 +167,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla2 = new javax.swing.JTable();
+        jLabel26 = new javax.swing.JLabel();
+        txtNV = new javax.swing.JTextField();
+        txtAPaV = new javax.swing.JTextField();
+        txtAMaV = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JToggleButton();
         jPanel6 = new FondoPantallaVent();
         jLabel23 = new javax.swing.JLabel();
         btnCerrarSesion = new javax.swing.JButton();
@@ -194,7 +223,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50)
                 .addComponent(btnAcuerdo)
-                .addContainerGap(192, Short.MAX_VALUE))
+                .addContainerGap(315, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Aviso de Privacidad", jPanel2);
@@ -332,7 +361,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                     .addComponent(btnSaveChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminarUsuario)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(307, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ver Perfil", jPanel3);
@@ -577,7 +606,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                             .addComponent(jLabel17)
                             .addComponent(jLabel18)
                             .addComponent(jLabel19))))
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(296, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Comprar Boleto", jPanel4);
@@ -618,6 +647,17 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 .addGap(0, 51, Short.MAX_VALUE))
         );
 
+        jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel26.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel26.setText("BUSCAR INFORMACIÓN A TRAVÉS DEL CLIENTE");
+
+        btnBuscar.setText("BUSCAR");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -630,6 +670,16 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(102, 102, 102)
+                .addComponent(jLabel26)
+                .addGap(48, 48, 48)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtAMaV)
+                    .addComponent(txtAPaV)
+                    .addComponent(txtNV)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -638,7 +688,17 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 .addComponent(btnActualizar)
                 .addGap(30, 30, 30)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26)
+                    .addComponent(txtNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtAPaV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtAMaV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnBuscar)
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Ver Historial", jPanel5);
@@ -677,7 +737,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addComponent(btnCerrarSesion)
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addContainerGap(420, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Cerrar Sesión", jPanel6);
@@ -690,7 +750,9 @@ public class PantallaVentanas extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -701,7 +763,9 @@ public class PantallaVentanas extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -763,12 +827,68 @@ public class PantallaVentanas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveChangesActionPerformed
 
     private void btnComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprarActionPerformed
-        int codR = 6;
         
-        modificarReserva(codR);
-        getReservaData(codR);
+        String ans[] = {"Confirmar Reserva","Cancelar Reserva","Modificar Reserva"};  
+        int opc = JOptionPane.showOptionDialog(this,"Elija una opción", 
+                "Estado de Reserva", 0, 0, null,ans,this);
+        if(opc == 0){//Confirma la compra
+            //Mostrar el boleto
+        }
+        if(opc == 1){//Cancela Reserva
+            System.out.println("Después de hacer conexion");
+            cancelarReserva(getCodReserva());
+            //vaciar los elementos de la pestaña de comprar boleto
+        }else{//Modificar Reserva
+            modificarReserva(getCodReserva());
+            getReservaData(getCodReserva());
+        }
+        
+        
     }//GEN-LAST:event_btnComprarActionPerformed
 
+    public int getCodReserva(){
+        int auxID = 0;
+        try {
+            //try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576")) {
+            try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576")) {
+                CallableStatement resConexionV;
+                resConexionV = miConexionBU.prepareCall("{call OBTENER_IDRESERVA}");
+                ResultSet res = resConexionV.executeQuery();
+                if(res.next()){
+                    auxID = res.getInt(1);
+                    System.out.println("auxId Cliente: "+auxID); 
+                }
+                res.close();
+                resConexionV.close();
+                miConexionBU.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Ha habido un error al obtener el ID de la reserva");
+            System.out.println(e);
+        }
+        return auxID;
+    }
+    public void cancelarReserva(int auxID){
+        
+        
+        try {
+            //try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576")) {
+            try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576")) {
+                CallableStatement resConexionV;
+                resConexionV = miConexionBU.prepareCall("{call CANCELAR_RESERVA(?)}");
+                System.out.println("auxId Cliente en try 2: "+auxID); 
+                resConexionV.setInt(1, auxID);
+                resConexionV.execute();
+                System.out.println("Si se logro :D");
+                resConexionV.close();
+                miConexionBU.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Ha habido un error al cancelar la reserva");
+            System.out.println(e);
+        } 
+    }//FIN DE CANCELAR RESERVA
+    
     private void cbTramoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTramoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbTramoActionPerformed
@@ -870,6 +990,61 @@ public class PantallaVentanas extends javax.swing.JFrame {
             errorModifReserva(2);
         }
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        try {
+            //try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576")) {
+            try (Connection miConexionBU = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576")) {
+                CallableStatement resConexionV;
+                resConexionV = miConexionBU.prepareCall("{call VER_RESERVAS_CLIENTE(?,?,?,?,?)}");
+                String nombreS = txtNV.getText();
+                String[] nombres = nombreS.split("\\s+");
+                if(nombres.length == 1){
+                    n1=txtNV.getText();
+                    n2="";
+                    resConexionV.setString(1,n1);
+                    resConexionV.setString(2,n2);
+                    //System.out.println("Solo un nombre c: "+nombres[0]);
+                    System.out.println("Solo un nombre c: "+n1);
+                }else if(nombres.length == 2){
+                    n1=nombres[0];
+                    n2=nombres[1];
+                    resConexionV.setString(1,n1);
+                    resConexionV.setString(2,n2);
+                    //System.out.println("Primer nombre: "+nombres[0]);
+                    System.out.println("Primer nombre: "+n1);
+                    //System.out.println("Segundo nombre: "+nombres[1]);
+                    System.out.println("Segundo nombre: "+n2);
+                }
+                a1=txtAPaV.getText();
+                a2=txtAMaV.getText();
+                resConexionV.setString(3,txtAPaV.getText());
+                resConexionV.setString(4,txtAMaV.getText());
+                System.out.println("usuario en met: "+p3.nUsuarioPI); 
+                resConexionV.setString(5, p3.nUsuarioPI);
+                ResultSet res = resConexionV.executeQuery();
+                if(res.next()){
+                    txtNV.setText("");
+                    txtAPaV.setText("");
+                    txtAMaV.setText("");
+                    PantallaVCliente pantallaVista = new PantallaVCliente();
+                    //this.setVisible(false); 
+                    pantallaVista.setVisible(true);  
+                }
+                
+                else{
+                    JOptionPane.showMessageDialog(null, "No se encontraron coincidencias con el nombre ingresado");
+                }
+                
+                res.close();
+                resConexionV.close();
+                miConexionBU.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Ha habido un error al buscar al usuario");
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
     
     public String getTramo(int itemSelected){
         String tramo = "";
@@ -1297,6 +1472,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAcuerdo;
+    private javax.swing.JToggleButton btnBuscar;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnComprar;
     private javax.swing.JButton btnEdit;
@@ -1328,6 +1504,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1347,6 +1524,8 @@ public class PantallaVentanas extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTable tabla2;
+    private javax.swing.JTextField txtAMaV;
+    private javax.swing.JTextField txtAPaV;
     private javax.swing.JTextField txtApeM;
     private javax.swing.JTextField txtApeP;
     private javax.swing.JTextField txtDCorreoE;
@@ -1358,6 +1537,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
     private javax.swing.JTextField txtDia;
     private javax.swing.JTextField txtEdad;
     private javax.swing.JTextField txtMes;
+    private javax.swing.JTextField txtNV;
     private javax.swing.JTextField txtNombres;
     private javax.swing.JTextField txtYear;
     // End of variables declaration//GEN-END:variables
