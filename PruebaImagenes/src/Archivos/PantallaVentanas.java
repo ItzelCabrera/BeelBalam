@@ -1104,8 +1104,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                         + "\n¿DESEA INTENTAR CAMBIAR LA RESERVA DE NUEVO?", "ERROR", 
                     JOptionPane.YES_NO_OPTION);
             if(input == 0){
-               //-->se muestran los datos de la reserva original 
-               //getReservaData(this.getCODreserva());
+               getReservaData(this.getCODreserva());
                System.out.println("Se muestran los datos de la reserva original");
             }else{
                 System.out.println("Ya no se modifica la reserva, se mantiene igual que como un inicio");
@@ -1113,6 +1112,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 this.txtApeP.setText("");
                 this.txtApeM.setText("");
                 this.txtEdad.setText("");
+                this.cbNacionalidad.setSelectedItem(null);
+                this.cbHora.setSelectedItem(null);
+                this.cbTramo.setSelectedItem(null);
+                this.cbDireccion.setSelectedItem(null);
+                fecha.setDate(null);
                 this.btnComprar.setVisible(true);
                 this.btnModificar.setVisible(false);
                 this.jLabel9.setText("Realizar reserva");
@@ -1124,10 +1128,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
                     + "\t*Los primeros nombres deben tener máximo 30 caracteres.\n"
                     + "\t*El primer apellido debe tener como máximo 15 caracteres\n"
                     + "\t*El segundo apellido debe tener como máximo 15 caracteres\n"
-                    + "\t*El campo de la edad no puede estar vacío y debe ser un entero\n", "ERROR", 
+                    + "\t*El campo de la edad no puede estar vacío y debe ser un entero\n"
+                    +"\n¿DESEA INTENTAR CAMBIAR LA RESERVA DE NUEVO?", "ERROR", 
                     JOptionPane.YES_NO_OPTION);
             if(input == 0){
-               //getReservaData(this.getCODreserva()); 
+               getReservaData(this.getCODreserva()); 
                System.out.println("Se muestran los datos de la reserva original");
             }else{
                 System.out.println("Ya no se modifica la reserva, se mantiene igual que como un inicio");
@@ -1135,6 +1140,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 this.txtApeP.setText("");
                 this.txtApeM.setText("");
                 this.txtEdad.setText("");
+                this.cbNacionalidad.setSelectedItem(null);
+                this.cbHora.setSelectedItem(null);
+                this.cbTramo.setSelectedItem(null);
+                this.cbDireccion.setSelectedItem(null);
+                fecha.setDate(null);
                 this.btnComprar.setVisible(true);
                 this.btnModificar.setVisible(false);
                 this.jLabel9.setText("Realizar reserva");
@@ -1240,16 +1250,8 @@ public class PantallaVentanas extends javax.swing.JFrame {
     public void getReservaData(int codReserva){
         String mat = "";
         String pNombre = "";String sNombre=""; String pApellido="";String sApellido="";
-        int edad;
+        int edad = 0;
         String nacionalidad = "";
-        /*String sDate1="31/12/1998";  
-        Date date1;  
-        try {
-            date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-            fecha.setDate(date1);
-        } catch (ParseException ex) {
-            Logger.getLogger(PantallaVentanas.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
         try {
             //Conecta
             Connection conex = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
@@ -1265,41 +1267,31 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 nacionalidad = rs.getString(6);
                 mat = rs.getString(7);
             }
-            String d = mat.substring(0, 1);
-            String m = mat.substring(2,3);
-            String y = mat.substring(4,7);
-            String hh = mat.substring(8, 9);
-            String mm = mat.substring(10,11);
-            String tramo = mat.substring(12,14);
-            String dir = mat.substring(15);
-            /*System.out.println(tramo);
-            switch (tramo) {
-                case "TS1":
-                    this.cbTramo.setSelectedIndex(0);
-                    break;
-                case "TS2":
-                    this.cbTramo.setSelectedIndex(1);
-                    break;
-                case "TC1":
-                    this.cbTramo.setSelectedIndex(2);
-                    break;
-                case "TC2":
-                    this.cbTramo.setSelectedIndex(3);
-                    break;
-                case "TG1-2":
-                    this.cbTramo.setSelectedIndex(4);
-                    break;
-                case "TG3":
-                    this.cbTramo.setSelectedIndex(5);
-                    break;
-                default:
-                    System.out.println("aqui no");
-                    break;
-            }
-            String sDate1 = "12/10/2021";
-            String[] datosFR = fechaR.split("\\s+");//divido la cadena 
-            Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-            fecha.setDate(date1);*/
+          
+            int sI = -1;
+            if((mat.substring((mat.length())-1)).equals("I")) sI = 0;
+            else sI = 1;
+            
+            if(sNombre == null)this.txtNombres.setText(pNombre);
+            else this.txtNombres.setText(pNombre.concat(" ").concat(sNombre));
+            
+            this.txtApeP.setText(pApellido);
+            
+            if(sApellido != null)this.txtApeM.setText(sApellido);
+            else this.txtApeM.setText("");
+            
+            this.txtEdad.setText(Integer.toString(edad));
+            
+            this.cbNacionalidad.setSelectedItem(nacionalidad);
+            
+            this.cbTramo.setSelectedItem(mat.substring(12,mat.length()-1));
+            String f=(mat.substring(0, 2)).concat("/").concat(mat.substring(2,4)).concat("/").concat(mat.substring(4,8));
+            Date date;
+            date = new SimpleDateFormat("dd/MM/yyyy").parse(f);
+            fecha.setDate(date);
+            this.cbHora.setSelectedItem((mat.substring(8, 10)).concat(":").concat(mat.substring(10,12)).concat(":00"));
+            System.out.println(sI);this.cbDireccion.setSelectedIndex(sI);
+            
             conex.close();
             stm.close();
             rs.close();
