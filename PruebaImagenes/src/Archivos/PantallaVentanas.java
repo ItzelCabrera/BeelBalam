@@ -8,6 +8,7 @@ package Archivos;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ItemEvent;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
@@ -76,6 +78,8 @@ public class PantallaVentanas extends javax.swing.JFrame {
         modelo.addColumn("Est Inicial");  
         modelo.addColumn("Est Final");  
         modelo.addColumn("Costo");
+        
+        LLenarCbCompra();
     }
     String[]botones={"Confirmar","Modificar","Cancelar"};
     
@@ -83,7 +87,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
         DefaultComboBoxModel tr = new DefaultComboBoxModel();
         tr.addElement("SELECCIONAR");
         try{
-            Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
+            Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576");
             CallableStatement resConexion = miConexion.prepareCall("{call VER_TRAMO_NOM}");
             ResultSet rtr = resConexion.executeQuery();
             while(rtr.next()){
@@ -132,21 +136,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jPanel4 = new FondoPantallaVent();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         cbTramo = new javax.swing.JComboBox<>();
-        cbEstIni = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
-        cbEstFin = new javax.swing.JComboBox<>();
         jLabel16 = new javax.swing.JLabel();
-        txtDia = new javax.swing.JTextField();
-        txtMes = new javax.swing.JTextField();
-        txtYear = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
         txtNombres = new javax.swing.JTextField();
         txtApeP = new javax.swing.JTextField();
         txtApeM = new javax.swing.JTextField();
@@ -377,10 +371,6 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("TRAMO:");
 
-        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("ESTACIÓN INICIAL:");
-
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setText("NOMBRE PASAJERO:");
@@ -393,43 +383,20 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jLabel14.setForeground(new java.awt.Color(255, 255, 255));
         jLabel14.setText("NACIONALIDAD:");
 
-        cbTramo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tramo Selva 1", "Tramo Selva 2", "Tramo Caribe 1", "Tramo Caribe 2", "Tramo Golfo 1-2", "Tramo Golfo 3" }));
+        cbTramo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbTramoItemStateChanged(evt);
+            }
+        });
         cbTramo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbTramoActionPerformed(evt);
             }
         });
 
-        cbEstIni.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel15.setText("ESTACIÓN FINAL:");
-
-        cbEstFin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(255, 255, 255));
         jLabel16.setText("FECHA DE RESERVA:");
-
-        txtDia.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-
-        txtMes.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-
-        txtYear.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-
-        jLabel17.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel17.setText("DÍA");
-
-        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel18.setText("MES");
-
-        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel19.setText("AÑO");
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jLabel20.setForeground(new java.awt.Color(255, 255, 255));
@@ -443,7 +410,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jLabel22.setForeground(new java.awt.Color(255, 255, 255));
         jLabel22.setText("AP. MATERNO");
 
-        cbNacionalidad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mexicana", "Colombiana", "Estadounidense", "Canadiense", "Otro" }));
+        cbNacionalidad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MEXICANA ", "ESTADOUNIDENSE", "COLOMBIANA", "CHILENA", "ARGENTINA", "ESPAÑOLA", "FRANCESA", "ITALIANA", "COREANA", "OTRA" }));
 
         btnComprar.setText("COMPRAR");
         btnComprar.addActionListener(new java.awt.event.ActionListener() {
@@ -463,13 +430,11 @@ public class PantallaVentanas extends javax.swing.JFrame {
         jLabel24.setForeground(new java.awt.Color(255, 255, 255));
         jLabel24.setText("DIRECCIÓN:");
 
-        cbDireccion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Norte", "Sur" }));
-
         jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel25.setForeground(new java.awt.Color(255, 255, 255));
         jLabel25.setText("HORARIO");
 
-        cbHora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "09:00 HRS", "13:00 HRS", "17:00 HRS" }));
+        cbHora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "09:00:00", "13:00:00", "17:00:00" }));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -478,29 +443,6 @@ public class PantallaVentanas extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(63, 63, 63)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel11)
-                            .addComponent(cbEstIni, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbEstFin, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel17)
-                                .addGap(31, 31, 31)
-                                .addComponent(jLabel18)
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel19))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(228, 228, 228)
                         .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -577,36 +519,16 @@ public class PantallaVentanas extends javax.swing.JFrame {
                     .addComponent(jLabel21)
                     .addComponent(jLabel22))
                 .addGap(12, 12, 12)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
-                            .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(cbNacionalidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnComprar)
-                            .addComponent(btnModificar))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbEstIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbEstFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel17)
-                            .addComponent(jLabel18)
-                            .addComponent(jLabel19))))
-                .addContainerGap(296, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(cbNacionalidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnComprar)
+                    .addComponent(btnModificar))
+                .addContainerGap(353, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Comprar Boleto", jPanel4);
@@ -827,23 +749,70 @@ public class PantallaVentanas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveChangesActionPerformed
 
     private void btnComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprarActionPerformed
-        
-        String ans[] = {"Confirmar Reserva","Cancelar Reserva","Modificar Reserva"};  
-        int opc = JOptionPane.showOptionDialog(this,"Elija una opción", 
-                "Estado de Reserva", 0, 0, null,ans,this);
-        if(opc == 0){//Confirma la compra
-            //Mostrar el boleto
-        }
-        if(opc == 1){//Cancela Reserva
-            System.out.println("Después de hacer conexion");
-            cancelarReserva(getCodReserva());
-            //vaciar los elementos de la pestaña de comprar boleto
-        }else{//Modificar Reserva
-            modificarReserva(getCodReserva());
-            getReservaData(getCodReserva());
-        }
-        
-        
+        if(txtNombres.getText().isEmpty()||txtApeP.getText().isEmpty()||txtEdad.getText().isEmpty()||
+                cbTramo.getSelectedIndex()==0){
+            
+            JOptionPane.showMessageDialog(null, "¡Error! Alguno o varios datos son incorrectos ");
+            txtNombres.setText("");
+            txtApeP.setText("");
+            txtApeM.setText("");
+            
+        }else{
+            String nombreRecibido = txtNombres.getText();
+            String[] nombres = nombreRecibido.split("\\s+");
+            if(nombres.length == 1){
+                reserva.setpNombre(txtNombres.getText());
+                reserva.setsNombre(" ");
+                System.out.println("Solo un nombre: "+nombres[0]);
+            }else if(nombres.length == 2){
+                reserva.setpNombre(nombres[0]);
+                reserva.setsNombre(nombres[1]);
+                System.out.println("Primer nombre: "+nombres[0]);
+                System.out.println("Segundo nombre: "+nombres[1]);
+             }
+            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+            String date = formato.format(this.fecha.getDate());
+            StringTokenizer dt = new StringTokenizer(date,"/");
+            StringTokenizer hr = new StringTokenizer(cbHora.getSelectedItem().toString(),":");
+            String day = dt.nextToken();
+            String month = dt.nextToken();
+            String year = dt.nextToken();
+            String hrs = hr.nextToken();
+            String min = hr.nextToken();
+            String seg = hr.nextToken();
+            String placa ="";
+            if(cbDireccion.getSelectedIndex() == 0){
+                placa=cbTramo.getSelectedItem().toString().concat("I");
+            }else if(cbDireccion.getSelectedIndex() == 1){
+                placa=cbTramo.getSelectedItem().toString().concat("F");
+            }
+            System.out.println(date);
+            System.out.println(dt);
+            reserva.setpApellido(txtApeP.getText());
+            reserva.setsApellido(txtApeM.getText());
+            reserva.setEdad(Integer.parseInt(txtEdad.getText()));
+            reserva.setNcd(cbNacionalidad.getSelectedItem().toString());
+            reserva.setMatTren(day.concat(month).concat(year).concat(hrs).concat(min).concat(placa));
+            System.out.println(reserva.getMatTren());
+            reserva.setDateR(date.concat(" ").concat(cbHora.getSelectedItem().toString()));
+            reserva.setNombreUs(user);
+            reserva.setNombreTr(cbTramo.getSelectedItem().toString());
+            reserva.hacerConexionrRe();
+            String ans[] = {"Confirmar Reserva","Cancelar Reserva","Modificar Reserva"};  
+            int opc = JOptionPane.showOptionDialog(this,"Elija una opción", 
+                    "Estado de Reserva", 0, 0, null,ans,this);
+            if(opc == 0){//Confirma la compra
+                //Mostrar el boleto
+                exitoModifReserva();
+            }
+            if(opc == 1){//Cancela Reserva
+                System.out.println("Después de hacer conexion");
+                cancelarReserva(getCodReserva());
+                exitoModifReserva();
+            }if(opc == 2){//Modificar Reserva
+                modificarReserva(getCodReserva());
+            }
+        } 
     }//GEN-LAST:event_btnComprarActionPerformed
 
     public int getCodReserva(){
@@ -955,6 +924,24 @@ public class PantallaVentanas extends javax.swing.JFrame {
         if(v == 4){//Realiza el cambio de reserva debido a que los datos ingresados son correctos
             String r = "";
             boolean res;
+            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+            String date = formato.format(this.fecha.getDate());
+            StringTokenizer dt = new StringTokenizer(date,"/");
+            StringTokenizer hr = new StringTokenizer(cbHora.getSelectedItem().toString(),":");
+            String day = dt.nextToken();
+            String month = dt.nextToken();
+            String year = dt.nextToken();
+            String hrs = hr.nextToken();
+            String min = hr.nextToken();
+            String seg = hr.nextToken();
+            String placa ="";
+            if(cbDireccion.getSelectedIndex() == 0){
+                placa=cbTramo.getSelectedItem().toString().concat("I");
+            }else if(cbDireccion.getSelectedIndex() == 1){
+                placa=cbTramo.getSelectedItem().toString().concat("F");
+            }
+            String mat = day.concat(month).concat(year).concat(hrs).concat(min).concat(placa);
+            String fechaReserva = date.concat(" ").concat(cbHora.getSelectedItem().toString());
             try {
                 //Conecta
                 Connection conex = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM","sa", "2020640576");
@@ -963,15 +950,16 @@ public class PantallaVentanas extends javax.swing.JFrame {
                 stm.setString(2, retorno[1]);
                 stm.setString(3, this.txtApeP.getText());
                 stm.setString(4, this.txtApeM.getText());
-                stm.setInt(5, Integer.parseInt(this.txtMes.getText()));
+                stm.setInt(5, Integer.parseInt(this.txtEdad.getText()));
                 stm.setString(6, this.cbNacionalidad.getSelectedItem().toString());
-                stm.setString(7, "120620211300TG1N"); //metodo para obtener la matricula
-                stm.setString(8, "12/06/2021 13:00:00"); //metodo para obtener la fecha de reserva
+                stm.setString(7, mat); //metodo para obtener la matricula
+                stm.setString(8, fechaReserva); //metodo para obtener la fecha de reserva
                 stm.setString(9, this.getUser());
-                stm.setString(10,this.getTramo(this.cbTramo.getSelectedIndex()));
+                stm.setString(10,this.cbTramo.getSelectedItem().toString());
                 stm.setInt(11, this.getCODreserva());
                 ResultSet rs = stm.executeQuery();
                 if(rs.next())r = rs.getString(1);
+                System.out.println("RESULTADO DE VERIFICACION MATRICULA" + r);
                 if(r == "E") res = false;
                 else res = true;
                 conex.close();
@@ -1045,41 +1033,63 @@ public class PantallaVentanas extends javax.swing.JFrame {
             System.out.println(e);
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void cbTramoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTramoItemStateChanged
+        if(evt.getStateChange()==ItemEvent.SELECTED){
+            if(cbTramo.getSelectedIndex()>0){
+                if(cbTramo.getSelectedItem().toString().equals("TC1")){
+                    cbDireccion.setModel(this.getDirecciones("TC1"));
+                }else if(cbTramo.getSelectedItem().toString().equals("TC2")){
+                    cbDireccion.setModel(this.getDirecciones("TC2"));
+                }else if(cbTramo.getSelectedItem().toString().equals("TG1-2")){
+                    cbDireccion.setModel(this.getDirecciones("TG1-2"));
+                }else if(cbTramo.getSelectedItem().toString().equals("TG3")){
+                    cbDireccion.setModel(this.getDirecciones("TG3"));
+                }else if(cbTramo.getSelectedItem().toString().equals("TS1")){
+                    cbDireccion.setModel(this.getDirecciones("TS1"));
+                }else if(cbTramo.getSelectedItem().toString().equals("TS2")){
+                    cbDireccion.setModel(this.getDirecciones("TS2"));
+                }
+            }
+        }else{
+            DefaultComboBoxModel vac = new DefaultComboBoxModel();
+            vac.addElement(" ");
+            cbDireccion.setModel(vac);
+        }
+    }//GEN-LAST:event_cbTramoItemStateChanged
     
-    public String getTramo(int itemSelected){
-        String tramo = "";
-        switch (itemSelected) {
-        case 0:
-            tramo = "TS1";
-            break;
-        case 1:
-            tramo = "TS2";
-            break;
-        case 2:
-            tramo = "TC1";
-            break;
-        case 3:
-            tramo = "TC2";
-            break;
-        case 4:
-            tramo = "TG1-2";
-            break;
-        case 5:
-            tramo = "TG3";
-            break;
-        default:
-            tramo = "ERROR";
-            break;
-    }
-        return tramo;
+    public DefaultComboBoxModel getDirecciones(String tramoNom){
+        DefaultComboBoxModel dir = new DefaultComboBoxModel();
+        try{
+            Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576");
+            CallableStatement conexionEI = miConexion.prepareCall("{call VER_TRAMO_EI(?)}");
+            conexionEI.setString(1,tramoNom);
+            ResultSet eir = conexionEI.executeQuery();
+            CallableStatement conexionEF = miConexion.prepareCall("{call VER_TRAMO_EF(?)}");
+            conexionEF.setString(1,tramoNom);
+            ResultSet efr = conexionEF.executeQuery();
+            while(eir.next() && efr.next()){
+                dir.addElement(eir.getString(1));
+                dir.addElement(efr.getString(1));
+            }
+            conexionEI.close();
+            conexionEF.close();
+            miConexion.close();
+            
+        }catch(Exception e){
+            System.out.println("Hubo un error en las estaciones");
+        }
+        return dir;
     }
     
     public void exitoModifReserva(){
         JOptionPane.showMessageDialog(null, "Reserva Modificada con exito");
+        fecha.setDate(null);
         this.txtNombres.setText("");
         this.txtApeP.setText("");
         this.txtApeM.setText("");
         this.txtEdad.setText("");
+        this.cbTramo.setSelectedIndex(0);
         this.btnComprar.setVisible(true);
         this.btnModificar.setVisible(false);
         this.jLabel9.setText("Realizar reserva");
@@ -1095,6 +1105,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                     JOptionPane.YES_NO_OPTION);
             if(input == 0){
                //-->se muestran los datos de la reserva original 
+               //getReservaData(this.getCODreserva());
                System.out.println("Se muestran los datos de la reserva original");
             }else{
                 System.out.println("Ya no se modifica la reserva, se mantiene igual que como un inicio");
@@ -1116,7 +1127,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
                     + "\t*El campo de la edad no puede estar vacío y debe ser un entero\n", "ERROR", 
                     JOptionPane.YES_NO_OPTION);
             if(input == 0){
-               //-->se muestran los datos de la reserva original 
+               //getReservaData(this.getCODreserva()); 
                System.out.println("Se muestran los datos de la reserva original");
             }else{
                 System.out.println("Ya no se modifica la reserva, se mantiene igual que como un inicio");
@@ -1227,9 +1238,10 @@ public class PantallaVentanas extends javax.swing.JFrame {
     }
     
     public void getReservaData(int codReserva){
-        String fechaR = "";
-        String tramo = "";
-        String matricula = "";
+        String mat = "";
+        String pNombre = "";String sNombre=""; String pApellido="";String sApellido="";
+        int edad;
+        String nacionalidad = "";
         /*String sDate1="31/12/1998";  
         Date date1;  
         try {
@@ -1245,11 +1257,22 @@ public class PantallaVentanas extends javax.swing.JFrame {
             stm.setInt(1,codReserva);
             ResultSet rs = stm.executeQuery();
             if(rs.next()){
-                fechaR = rs.getString(1);
-                tramo = rs.getString(2);
-                matricula = rs.getString(3);
+                pNombre = rs.getString(1);
+                sNombre = rs.getString(2);
+                pApellido = rs.getString(3);
+                sApellido = rs.getString(4);
+                edad = rs.getInt(5);
+                nacionalidad = rs.getString(6);
+                mat = rs.getString(7);
             }
-            System.out.println(tramo);
+            String d = mat.substring(0, 1);
+            String m = mat.substring(2,3);
+            String y = mat.substring(4,7);
+            String hh = mat.substring(8, 9);
+            String mm = mat.substring(10,11);
+            String tramo = mat.substring(12,14);
+            String dir = mat.substring(15);
+            /*System.out.println(tramo);
             switch (tramo) {
                 case "TS1":
                     this.cbTramo.setSelectedIndex(0);
@@ -1276,7 +1299,7 @@ public class PantallaVentanas extends javax.swing.JFrame {
             String sDate1 = "12/10/2021";
             String[] datosFR = fechaR.split("\\s+");//divido la cadena 
             Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-            fecha.setDate(date1);
+            fecha.setDate(date1);*/
             conex.close();
             stm.close();
             rs.close();
@@ -1480,23 +1503,16 @@ public class PantallaVentanas extends javax.swing.JFrame {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSaveChanges;
     private javax.swing.JComboBox<String> cbDireccion;
-    private javax.swing.JComboBox<String> cbEstFin;
-    private javax.swing.JComboBox<String> cbEstIni;
     private javax.swing.JComboBox<String> cbHora;
     private javax.swing.JComboBox<String> cbNacionalidad;
     private javax.swing.JComboBox<String> cbTramo;
     private com.toedter.calendar.JDateChooser fecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
@@ -1534,12 +1550,9 @@ public class PantallaVentanas extends javax.swing.JFrame {
     private javax.swing.JTextField txtDNumTarjeta;
     private javax.swing.JTextField txtDPassword;
     private javax.swing.JTextField txtDPtosAcum;
-    private javax.swing.JTextField txtDia;
     private javax.swing.JTextField txtEdad;
-    private javax.swing.JTextField txtMes;
     private javax.swing.JTextField txtNV;
     private javax.swing.JTextField txtNombres;
-    private javax.swing.JTextField txtYear;
     // End of variables declaration//GEN-END:variables
     class FondoPantallaVent extends JPanel{
        private Image imagen; 

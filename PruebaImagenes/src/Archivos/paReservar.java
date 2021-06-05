@@ -23,7 +23,7 @@ public class paReservar {
     private int edad;
     private String ncd;
     private String matTren;
-    private int dateR;
+    private String dateR;
     private String nombreUs;
     private String nombreTr;  
     //METODOS
@@ -84,11 +84,11 @@ public class paReservar {
         this.matTren = matTren;
     }
 
-    public int getDateR() {
+    public String getDateR() {
         return dateR;
     }
 
-    public void setDateR(int dateR) {
+    public void setDateR(String dateR) {
         this.dateR = dateR;
     }
 
@@ -109,12 +109,18 @@ public class paReservar {
     }
     
     public void hacerConexionrRe(){
-        try {                                               try ( //DESKTOP-KT6L84G
+        //try { try ( 
+                //Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576") //2020640576
+               // Connection miConexion = DriverManager.getConnection("jdbc:sqlserver://LAPTOP-8M3QSOFP\\SQLEXPRESS:1433;databaseName=BEEL_BALAM","sa", "llatitabebe")
+                //) {
+        
+            try {                                               
+                try ( //DESKTOP-KT6L84G
                 Connection miConexion = DriverManager.getConnection(
                         "jdbc:sqlserver://DESKTOP-KT6L84G:1433;databaseName=BEEL_BALAM", "sa", "2020640576") //2020640576
             ) {
             CallableStatement resConexion;
-            resConexion = miConexion.prepareCall("{call COMPRA_BOLETOS(?,?,?,?,?,?,?,?,?,?)}");
+            resConexion = miConexion.prepareCall("{call VERIFICACION_MATRICULA(?,?,?,?,?,?,?,?,?,?,?)}");
             resConexion.setString(1,this.getpNombre());
             resConexion.setString(2,this.getsNombre());
             resConexion.setString(3,this.getpApellido());
@@ -122,11 +128,15 @@ public class paReservar {
             resConexion.setInt(5,this.getEdad());
             resConexion.setString(6,this.getNcd());
             resConexion.setString(7,this.getMatTren());
-            resConexion.setInt(8,this.getDateR());
+            resConexion.setString(8,this.getDateR());
             resConexion.setString(9,this.getNombreUs());
             resConexion.setString(10,this.getNombreTr());
-            JOptionPane.showMessageDialog(null, "Se ha generado correctamente la reserva");
+            resConexion.setInt(11,0);//CODIGO DE LA RESERVA
+            //JOptionPane.showMessageDialog(null, "Se ha generado correctamente la reserva");
+            resConexion.execute();
+            System.out.println("Se inserto a tabla reserva");
             resConexion.close();
+            miConexion.close();
             }
         } catch (Exception e) {
             System.out.println("Ha habido un error al generar la reserva");
